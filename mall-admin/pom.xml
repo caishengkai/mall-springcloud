@@ -23,6 +23,10 @@
             <groupId>com.csk.mall</groupId>
             <artifactId>mall-mbg</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.csk.mall</groupId>
+            <artifactId>mall-security</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

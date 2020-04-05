@@ -5,6 +5,7 @@
     <modules>
         <module>mall-mbg</module>
         <module>mall-common</module>
+        <module>mall-security</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -28,8 +29,11 @@
         <mybatis-generator.version>1.3.7</mybatis-generator.version>
         <swagger2.version>2.7.0</swagger2.version>
         <mybatis.version>3.4.6</mybatis.version>
+        <jjwt.version>0.9.0</jjwt.version>
+        <hutool.version>4.5.7</hutool.version>
         <mall-common.version>1.0-SNAPSHOT</mall-common.version>
         <mall-mbg.version>1.0-SNAPSHOT</mall-mbg.version>
+        <mall-security.version>1.0-SNAPSHOT</mall-security.version>
     </properties>
 
     <dependencies>
@@ -63,6 +67,12 @@
                 <groupId>com.csk.mall</groupId>
                 <artifactId>mall-mbg</artifactId>
                 <version>${mall-mbg.version}</version>
+            </dependency>
+            <!--mall安全模块-->
+            <dependency>
+                <groupId>com.csk.mall</groupId>
+                <artifactId>mall-security</artifactId>
+                <version>${mall-security.version}</version>
             </dependency>
             <!--MyBatis分页插件starter-->
             <dependency>
@@ -104,6 +114,18 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${swagger2.version}</version>
+            </dependency>
+            <!--JWT(Json Web Token)登录支持-->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <!--Hutool Java工具包-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

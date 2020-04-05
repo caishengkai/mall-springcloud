@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * @time: 2020/4/4 14:50
  */
 @Configuration
-@MapperScan("com.csk.mall.mapper")
+@MapperScan({"com.csk.mall.mapper","com.csk.mall.dao"})
 public class MyBatisConfig {
 }
