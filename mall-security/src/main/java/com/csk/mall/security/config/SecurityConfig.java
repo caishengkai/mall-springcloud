@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,32 +32,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private RestfulAuthEntryPoint restfulAuthEntryPoint;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private IgnoreUrlsConfig ignoreUrlsConfig;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf() // 由于使用的是JWT，我们这里不需要csrf
+
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = httpSecurity
+                .authorizeRequests();
+
+        for (String url : ignoreUrlsConfig.getUrls()) {
+            registry.antMatchers(url).permitAll();
+        }
+        registry.antMatchers(HttpMethod.OPTIONS) //跨域请求会先进行一次options请求
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .csrf() // 由于使用的是JWT，我们这里不需要csrf
                 .disable()
                 .sessionManagement() // 基于token，所以不需要session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET) // 允许对于网站静态资源的无授权访问
-                .permitAll()
-                .antMatchers("/admin/login", "/admin/regist") // 对登录注册要允许匿名访问
-                .permitAll()
-                .antMatchers(HttpMethod.OPTIONS) //跨域请求会先进行一次options请求
-                .permitAll()
-                .anyRequest() // 除上面外的所有请求全部需要鉴权认证
-                .authenticated();
-
-        // 禁用缓存
-        httpSecurity.headers().cacheControl();
-        //在账号密码校验前添加JWT filter
-        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-        httpSecurity.exceptionHandling()
+                .exceptionHandling()
                 .accessDeniedHandler(restfulAccessDeniedHandler)
-                .authenticationEntryPoint(restfulAuthEntryPoint);
+                .authenticationEntryPoint(restfulAuthEntryPoint)
+                .and()
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);//在账号密码校验前添加JWT filter
     }
 
     @Override

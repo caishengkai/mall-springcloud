@@ -6,10 +6,9 @@ import com.csk.mall.dto.UmsAdminParam;
 import com.csk.mall.model.UmsAdmin;
 import com.csk.mall.service.UmsAdminService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -20,15 +19,16 @@ import java.util.Map;
  * @author: caishengkai
  * @time: 2020/4/4 14:53
  */
+@Api(tags = "UmsAdminController", description = "后台用户管理")
 @RestController
 @RequestMapping("/admin")
-@Api(tags = "UmsAdminController", description = "xxx")
 public class UmsAdminController {
 
     @Autowired
     private UmsAdminService adminService;
 
-    @RequestMapping("/regist")
+    @ApiOperation(value = "用户注册")
+    @PostMapping("/regist")
     public CommonResult regist(@RequestBody UmsAdminParam umsAdminParam) {
         UmsAdmin admin = adminService.regist(umsAdminParam);
         if (admin == null) {
@@ -37,7 +37,8 @@ public class UmsAdminController {
         return CommonResult.success(admin);
     }
 
-    @RequestMapping("/login")
+    @ApiOperation(value = "登录")
+    @PostMapping("/login")
     public CommonResult login(@RequestBody UmsAdminLoginParam umsAdminLoginParam) {
         String token = adminService.login(umsAdminLoginParam.getUsername(), umsAdminLoginParam.getPassword());
         if (token == null) {
@@ -46,7 +47,8 @@ public class UmsAdminController {
         return CommonResult.success(token);
     }
 
-    @RequestMapping("/info")
+    @ApiOperation(value = "查看用户详情")
+    @GetMapping("/info")
     public CommonResult info(Principal principal) {
         if (principal == null) {
             return CommonResult.unauthorized();
@@ -61,4 +63,10 @@ public class UmsAdminController {
         data.put("icon", umsAdmin.getIcon());
         return CommonResult.success(data);
     }
+
+    /*@ApiOperation(value = "给用户分配角色")
+    @GetMapping("/role/update")
+    public CommonResult updateRole() {
+
+    }*/
 }

@@ -1,12 +1,19 @@
 package com.csk.mall.config;
 
+import com.csk.mall.model.UmsResource;
+import com.csk.mall.security.component.DynamicSecurityService;
 import com.csk.mall.security.config.SecurityConfig;
 import com.csk.mall.service.UmsAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @description: 针对后台用户的springsecurity配置
@@ -23,6 +30,7 @@ public class AdminSecurityConfig extends SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         //获取登录用户信息
-        return username -> adminService.loadUserByUsername(username);
+        //return username -> adminService.loadUserByUsername(username);
+        return username -> adminService.loadUserByUsername2(username);
     }
 }

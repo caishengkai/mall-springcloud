@@ -1,13 +1,18 @@
 package com.csk.mall.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.csk.mall.bo.AdminUserDetails;
+import com.csk.mall.bo.AdminUserDetailsByPerm;
 import com.csk.mall.dao.UmsAdminRoleRelationDao;
 import com.csk.mall.dto.UmsAdminParam;
 import com.csk.mall.mapper.UmsAdminMapper;
 import com.csk.mall.model.UmsAdmin;
 import com.csk.mall.model.UmsAdminExample;
+import com.csk.mall.model.UmsPermission;
 import com.csk.mall.model.UmsResource;
 import com.csk.mall.security.util.JwtTokenUtil;
+import com.csk.mall.service.UmsAdminCacheService;
 import com.csk.mall.service.UmsAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +46,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UmsAdminCacheService adminCacheService;
 
     /**
      * 根据username获取springsecurity需要的用户详情UserDetails
@@ -58,17 +65,39 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     /**
+     * 根据username获取springsecurity需要的用户详情UserDetails,基于权限
+     * @param username
+     * @return
+     */
+    @Override
+    public UserDetails loadUserByUsername2(String username) {
+        UmsAdmin admin = getAdminByUsername(username);
+        if (admin != null) {
+            List<UmsPermission> permissionList = getPermissionList(admin.getId());
+            return new AdminUserDetailsByPerm(admin, permissionList);
+        }
+        throw new UsernameNotFoundException("用户名或密码错误！");
+    }
+
+
+    /**
      * 根据username获取UmsAdmin
      * @param username
      * @return
      */
     @Override
     public UmsAdmin getAdminByUsername(String username) {
+        UmsAdmin admin = adminCacheService.getAdmin(username);
+        if (admin != null) {
+            return admin;
+        }
         UmsAdminExample example = new UmsAdminExample();
         example.createCriteria().andUsernameEqualTo(username);
         List<UmsAdmin> adminList = adminMapper.selectByExample(example);
         if (adminList != null && adminList.size() > 0) {
-            return adminList.get(0);
+            admin = adminList.get(0);
+            adminCacheService.setAdmin(admin);
+            return admin;
         }
         return null;
     }
@@ -83,11 +112,30 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         return resourceList;
     }
 
+    /**
+     * 根据adminId获取用户所有可访问资源 TODO
+     * 目前只获取角色拥有的权限
+     * @param adminId
+     * @return
+     */
+    private List<UmsPermission> getPermissionList(long adminId) {
+        List<UmsPermission> permissionList = adminCacheService.getPermissionList(adminId);
+        if (CollUtil.isNotEmpty(permissionList)) {
+            return permissionList;
+        }
+        permissionList = adminRoleRelationDao.getPermissionList(adminId);
+        if (CollUtil.isNotEmpty(permissionList)) {
+            adminCacheService.setPermissionList(adminId, permissionList);
+        }
+        return permissionList;
+    }
+
+
     @Override
     public String login(String username, String password) {
         String token = null;
         try {
-            UserDetails userDetails = loadUserByUsername(username);
+            UserDetails userDetails = loadUserByUsername2(username);
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 throw new BadCredentialsException("密码不正确！");
             }

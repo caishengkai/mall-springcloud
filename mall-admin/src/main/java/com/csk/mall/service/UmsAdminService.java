@@ -15,5 +15,7 @@ public interface UmsAdminService {
 
     UmsAdmin regist(UmsAdminParam umsAdminParam);
 
+    UserDetails loadUserByUsername2(String username);
+
     UmsAdmin getAdminByUsername(String username);
 }

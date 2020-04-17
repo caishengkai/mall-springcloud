@@ -1,7 +1,7 @@
 package com.csk.mall.bo;
 
 import com.csk.mall.model.UmsAdmin;
-import com.csk.mall.model.UmsResource;
+import com.csk.mall.model.UmsPermission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,17 +11,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @description: springsecurity需要的用户详情，基于资源
+ * @description: springsecurity需要的用户详情,基于权限
  * @author: caishengkai
  * @time: 2020/4/5 10:30
  */
-public class AdminUserDetails implements UserDetails {
+public class AdminUserDetailsByPerm implements UserDetails {
 
     private UmsAdmin umsAdmin;
-    private List<UmsResource> resourceList;
-    public AdminUserDetails(UmsAdmin umsAdmin,List<UmsResource> resourceList) {
+    private List<UmsPermission> permissionList;
+    public AdminUserDetailsByPerm(UmsAdmin umsAdmin, List<UmsPermission> permissionList) {
         this.umsAdmin = umsAdmin;
-        this.resourceList = resourceList;
+        this.permissionList = permissionList;
     }
 
     /**
@@ -30,8 +30,9 @@ public class AdminUserDetails implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return resourceList.stream()
-                .map(resource -> new SimpleGrantedAuthority(resource.getId() + ":" + resource.getName()))
+        return permissionList.stream()
+                .filter(permission -> permission.getValue() != null)
+                .map(permission -> new SimpleGrantedAuthority(permission.getValue()))
                 .collect(Collectors.toList());
     }
 
