@@ -23,6 +23,11 @@
         <destination>localhost:4560</destination>
         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
+
+    <logger name="com.csk.mall.dao" level="DEBUG" />
+
+    <logger name="com.csk.mall.mapper" level="DEBUG" />
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>

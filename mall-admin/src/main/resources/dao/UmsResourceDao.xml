@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csk.mall.dao.UmsResourceDao">
+
+  <select id="getResourceList" resultType="com.csk.mall.model.UmsResource">
+    SELECT
+        ur.id id,
+        ur.create_time createTime,
+        ur.name name,
+        ur.url url,
+        ur.description description,
+        ur.category_id categoryId
+    FROM
+        UMS_ADMIN_ROLE_RELATION UAR
+    JOIN UMS_ROLE_RESOURCE_RELATION URR ON UAR.ROLE_ID = URR.ROLE_ID
+    JOIN UMS_RESOURCE UR ON URR.RESOURCE_ID = UR.ID
+    WHERE
+        UAR.ADMIN_ID = #{adminId}
+    GROUP BY
+        UR.ID
+  </select>
+
+    <select id="getResourceListByRoleId" resultType="com.csk.mall.model.UmsResource">
+        SELECT
+            ur.id id,
+            ur.create_time createTime,
+            ur.name name,
+            ur.url url,
+            ur.description description,
+            ur.category_id categoryId
+        FROM
+            ums_role_resource_relation rrr
+                JOIN ums_resource ur ON rrr.resource_id = ur.id
+        WHERE
+            rrr.role_id = #{roleId}
+    </select>
+
+</mapper>

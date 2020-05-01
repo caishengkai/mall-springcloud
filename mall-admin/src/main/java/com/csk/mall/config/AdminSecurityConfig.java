@@ -4,6 +4,7 @@ import com.csk.mall.model.UmsResource;
 import com.csk.mall.security.component.DynamicSecurityService;
 import com.csk.mall.security.config.SecurityConfig;
 import com.csk.mall.service.UmsAdminService;
+import com.csk.mall.service.UmsResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,11 +27,25 @@ public class AdminSecurityConfig extends SecurityConfig {
 
     @Autowired
     private UmsAdminService adminService;
+    @Autowired
+    private UmsResourceService umsResourceService;
 
     @Bean
     public UserDetailsService userDetailsService() {
         //获取登录用户信息
-        //return username -> adminService.loadUserByUsername(username);
-        return username -> adminService.loadUserByUsername2(username);
+        return username -> adminService.loadUserByUsername(username);
+        //return username -> adminService.loadUserByUsername2(username);
+    }
+
+    @Bean
+    public DynamicSecurityService dynamicSecurityService() {
+        return () -> {
+            Map<String, ConfigAttribute> map = new ConcurrentHashMap<>();
+            List<UmsResource> resourceList = umsResourceService.listAll();
+            for (UmsResource resource : resourceList) {
+                map.put(resource.getUrl(), new org.springframework.security.access.SecurityConfig(resource.getId() + ":" + resource.getName()));
+            }
+            return map;
+        };
     }
 }

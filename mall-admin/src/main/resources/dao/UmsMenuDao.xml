@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csk.mall.dao.UmsMenuDao">
+
+    <select id="getMenuList" resultType="com.csk.mall.model.UmsMenu">
+        SELECT
+            m.id id,
+            m.parent_id parentId,
+            m.create_time createTime,
+            m.title title,
+            m.level level,
+            m.sort sort,
+            m.name name,
+            m.icon icon,
+            m.hidden hidden
+        FROM
+            ums_admin_role_relation arr
+                JOIN ums_role_menu_relation rmr ON arr.role_id = rmr.role_id
+                JOIN ums_menu m ON rmr.menu_id = m.id
+        WHERE
+            arr.admin_id = #{adminId}
+        GROUP BY
+            m.id
+    </select>
+
+    <select id="getMenuListByRoleId" resultType="com.csk.mall.model.UmsMenu">
+        SELECT
+            m.id id,
+            m.parent_id parentId,
+            m.create_time createTime,
+            m.title title,
+            m.level level,
+            m.sort sort,
+            m.name name,
+            m.icon icon,
+            m.hidden hidden
+        FROM
+            ums_role_menu_relation rmr
+                JOIN ums_menu m ON rmr.menu_id = m.id
+        WHERE
+            rmr.role_id = #{roleId}
+    </select>
+</mapper>

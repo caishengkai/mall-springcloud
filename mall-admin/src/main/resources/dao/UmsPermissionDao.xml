@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csk.mall.dao.UmsPermissionDao">
+
+    <select id="getPermissionList" resultType="com.csk.mall.model.UmsPermission">
+    SELECT
+        up.id id,
+        up.create_time createTime,
+        up.name name,
+        up.uri uri,
+        up.value value
+    FROM
+        UMS_ADMIN_ROLE_RELATION UAR
+    LEFT JOIN UMS_ROLE_PERMISSION_RELATION URP ON UAR.ROLE_ID = URP.ROLE_ID
+    LEFT JOIN UMS_PERMISSION UP ON URP.PERMISSION_ID = UP.ID
+    WHERE
+        UAR.ADMIN_ID = #{adminId}
+    GROUP BY
+        UP.ID
+  </select>
+
+</mapper>

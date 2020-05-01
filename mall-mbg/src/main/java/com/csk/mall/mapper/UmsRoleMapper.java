@@ -1,5 +1,6 @@
 package com.csk.mall.mapper;
 
+import com.csk.mall.model.UmsMenu;
 import com.csk.mall.model.UmsRole;
 import com.csk.mall.model.UmsRoleExample;
 import java.util.List;
