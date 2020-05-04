@@ -3,9 +3,9 @@
 <mapper namespace="com.csk.mall.dao.UmsRoleResourceRelationDao">
     <insert id="insertList">
         INSERT INTO UMS_ROLE_RESOURCE_RELATION (ROLE_ID, RESOURCE_ID) VALUES
-        <foreach collection="list" separator="," item="item" open="(" close=")">
-            #{item.roleId, jdbcType=BIGINT},
-            #{item.resourceId, jdbcType=BIGINT}
+        <foreach collection="list" separator="," item="item">
+            (#{item.roleId, jdbcType=BIGINT},
+            #{item.resourceId, jdbcType=BIGINT})
         </foreach>
     </insert>
 </mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csk.mall.dao.PmsProductCategoryAttributeRelationDao">
+    <insert id="insertList">
+        INSERT INTO PMS_PRODUCT_CATEGORY_ATTRIBUTE_RELATION (PRODUCT_CATEGORY_ID, PRODUCT_ATTRIBUTE_ID) VALUES
+        <foreach collection="list" separator="," item="item">
+            (#{item.productCategoryId, jdbcType=BIGINT},
+            #{item.productAttributeId, jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
+    <select id="getProductAttrInfo" resultType="com.csk.mall.dto.ProductAttrInfo">
+        select
+            pa.id attributeId,
+            pac.id attributeCategoryId
+        from pms_product_category_attribute_relation pcar
+        left join pms_product_attribute pa on pcar.product_attribute_id=pa.id
+        left join pms_product_attribute_category pac on pa.product_attribute_category_id=pac.id
+        where pcar.product_category_id=#{productCategoryId}
+    </select>
+</mapper>

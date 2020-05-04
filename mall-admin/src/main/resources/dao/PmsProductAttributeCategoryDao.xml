@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csk.mall.dao.PmsProductAttributeCategoryDao">
+    <resultMap id="listWithAttrMap" type="com.csk.mall.dto.PmsProductAttributeCategoryItem"
+            extends="com.csk.mall.mapper.PmsProductAttributeCategoryMapper.BaseResultMap">
+        <collection property="productAttributeList" resultMap="com.csk.mall.mapper.PmsProductAttributeMapper.BaseResultMap"
+            columnPrefix="attr_" />
+    </resultMap>
+    
+    <select id="getListWithAttr" resultMap="listWithAttrMap">
+        select
+            ac.id,
+            ac.name,
+            a.id attr_id,
+            a.name attr_name
+        from pms_product_attribute_category ac left join pms_product_attribute a on
+        ac.id=a.product_attribute_category_id and a.type = 1
+    </select>
+</mapper>
