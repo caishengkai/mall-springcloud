@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csk.mall.portal.dao.PortalProductDao">
+
+    <resultMap id="cartProductMap" type="com.csk.mall.portal.dto.CartProduct">
+        <collection property="productAttributeList" columnPrefix="attr_" resultMap="com.csk.mall.mapper.PmsProductAttributeMapper.BaseResultMap" />
+        <collection property="skuStockList" columnPrefix="sku_" resultMap="com.csk.mall.mapper.PmsSkuStockMapper.BaseResultMap" />
+    </resultMap>
+
+    <select id="getCartProduct" resultMap="cartProductMap">
+        SELECT
+            p.id id,
+            p.`name` name,
+            p.sub_title subTitle,
+            p.price price,
+            p.pic pic,
+            p.product_attribute_category_id productAttributeCategoryId,
+            p.stock stock,
+            pa.id attr_id,
+            pa.`name` attr_name,
+            ps.id sku_id,
+            ps.sku_code sku_code,
+            ps.price sku_price,
+            ps.stock sku_stock,
+            ps.pic sku_pic
+        FROM
+            pms_product p
+            LEFT JOIN pms_product_attribute pa ON p.product_attribute_category_id = pa.product_attribute_category_id
+            LEFT JOIN pms_sku_stock ps ON p.id=ps.product_id
+        WHERE
+            p.id = #{id}
+            AND pa.type = 0
+        ORDER BY pa.sort desc
+    </select>
+</mapper>
