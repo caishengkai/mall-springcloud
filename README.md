@@ -1,1 +1,1 @@
-参考学习https://github.com/macrozheng/mall
+基于mall,系统学习SpringCloud,参考https://github.com/macrozheng/springcloud-learning
